@@ -1,4 +1,4 @@
-/* Background: soft colorful gradient */
+/* Background*/
 body {
     background: linear-gradient(135deg, #eef2ff 0%, #fdf2f8 40%, #ecfeff 100%);
     color: #1f2937;
@@ -13,7 +13,7 @@ body {
 
 .navbar-brand {
     font-weight: 700;
-    color: #4f46e5 !important; /* indigo */
+    color: #4f46e5 !important; 
 }
 
 .nav-link {

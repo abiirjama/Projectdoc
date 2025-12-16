@@ -5,6 +5,7 @@ using StudentDocs.Models;
 
 namespace StudentDocs.Pages
 {
+    // Handles uploading a new document (any file type allowed)
     public class UploadModel : PageModel
     {
         private readonly AppDbContext _context;
@@ -46,21 +47,11 @@ namespace StudentDocs.Pages
                 return Page();
             }
 
-            // Validate file size (max 5 MB)
-            const long maxSize = 5 * 1024 * 1024;
+            // Validate file size (max 10 MB) - adjust if needed
+            const long maxSize = 10 * 1024 * 1024;
             if (UploadedFile.Length > maxSize)
             {
-                ErrorMessage = "File is too large. Max 5 MB.";
-                return Page();
-            }
-
-            // Validate allowed file extensions
-            var allowedExtensions = new[] { ".pdf", ".docx", ".png", ".jpg", ".jpeg" };
-            var extension = Path.GetExtension(UploadedFile.FileName).ToLowerInvariant();
-
-            if (!allowedExtensions.Contains(extension))
-            {
-                ErrorMessage = "Only PDF, DOCX, PNG, JPG files are allowed.";
+                ErrorMessage = "File is too large. Max 10 MB.";
                 return Page();
             }
 
@@ -68,7 +59,7 @@ namespace StudentDocs.Pages
             var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
             Directory.CreateDirectory(uploadsFolder);
 
-            // Generate a unique file name
+            // Generate a unique file name (prevents overwriting)
             var safeFileName = Path.GetFileName(UploadedFile.FileName);
             var uniqueFileName = $"{Guid.NewGuid()}_{safeFileName}";
             var filePath = Path.Combine(uploadsFolder, uniqueFileName);

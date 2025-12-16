@@ -2,15 +2,16 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using StudentDocs.Data;
-using StudentDocs.Models;
 
 namespace StudentDocs.Pages
 {
+    // Handles editing an existing document
     public class EditModel : PageModel
     {
         private readonly AppDbContext _context;
         private readonly IWebHostEnvironment _env;
 
+        // Inject database context and hosting environment
         public EditModel(AppDbContext context, IWebHostEnvironment env)
         {
             _context = context;
@@ -21,23 +22,23 @@ namespace StudentDocs.Pages
         [BindProperty]
         public int Id { get; set; }
 
-        // Editable category
+        // Editable document category
         [BindProperty]
         public string Category { get; set; } = string.Empty;
 
-        // Optional new file
+        // Optional replacement file
         [BindProperty]
         public IFormFile? NewFile { get; set; }
 
-        // Current file info (for display)
+        // Current file info (shown on the page)
         public string? CurrentFileName { get; set; }
         public string? CurrentFilePath { get; set; }
 
-        // Messages
+        // Status messages
         public string? ErrorMessage { get; set; }
         public string? Message { get; set; }
 
-        // Load existing document
+        // Load document data
         public async Task<IActionResult> OnGetAsync(int id)
         {
             var doc = await _context.Documents.FirstOrDefaultAsync(d => d.Id == id);
@@ -46,17 +47,16 @@ namespace StudentDocs.Pages
 
             Id = doc.Id;
             Category = doc.Category;
-
-            // Set current file info
             CurrentFileName = doc.FileName;
             CurrentFilePath = doc.FilePath;
 
             return Page();
         }
 
-        // Save changes
+        // Save updated data
         public async Task<IActionResult> OnPostAsync()
         {
+            // Validate category
             if (string.IsNullOrWhiteSpace(Category))
             {
                 ErrorMessage = "Category is required.";
@@ -69,33 +69,24 @@ namespace StudentDocs.Pages
 
             doc.Category = Category;
 
-            // Replace file if a new one is uploaded
+            // Replace file if a new one was uploaded (any file type allowed)
             if (NewFile != null && NewFile.Length > 0)
             {
-                // Validate file size (max 5 MB)
-                const long maxSize = 5 * 1024 * 1024;
+                // Validate file size (max 10 MB)
+                const long maxSize = 10 * 1024 * 1024;
                 if (NewFile.Length > maxSize)
                 {
-                    ErrorMessage = "File is too large. Max 5 MB.";
-                    return Page();
-                }
-
-                // Validate file type
-                var allowedExtensions = new[] { ".pdf", ".docx", ".png", ".jpg", ".jpeg" };
-                var ext = Path.GetExtension(NewFile.FileName).ToLowerInvariant();
-                if (!allowedExtensions.Contains(ext))
-                {
-                    ErrorMessage = "Only PDF, DOCX, PNG, JPG files are allowed.";
+                    ErrorMessage = "File is too large. Max 10 MB.";
                     return Page();
                 }
 
                 // Delete old file if it exists
                 if (!string.IsNullOrWhiteSpace(doc.FilePath))
                 {
-                    var oldPhysicalPath = Path.Combine(_env.WebRootPath, doc.FilePath.TrimStart('/'));
-                    if (System.IO.File.Exists(oldPhysicalPath))
+                    var oldPath = Path.Combine(_env.WebRootPath, doc.FilePath.TrimStart('/'));
+                    if (System.IO.File.Exists(oldPath))
                     {
-                        System.IO.File.Delete(oldPhysicalPath);
+                        System.IO.File.Delete(oldPath);
                     }
                 }
 
@@ -105,14 +96,14 @@ namespace StudentDocs.Pages
 
                 var safeFileName = Path.GetFileName(NewFile.FileName);
                 var uniqueFileName = $"{Guid.NewGuid()}_{safeFileName}";
-                var newPhysicalPath = Path.Combine(uploadsFolder, uniqueFileName);
+                var newPath = Path.Combine(uploadsFolder, uniqueFileName);
 
-                using (var stream = new FileStream(newPhysicalPath, FileMode.Create))
+                using (var stream = new FileStream(newPath, FileMode.Create))
                 {
                     await NewFile.CopyToAsync(stream);
                 }
 
-                // Update document info
+                // Update document fields
                 doc.FileName = safeFileName;
                 doc.FileSize = NewFile.Length;
                 doc.FilePath = "/uploads/" + uniqueFileName;
@@ -121,7 +112,7 @@ namespace StudentDocs.Pages
 
             await _context.SaveChangesAsync();
 
-            // Update displayed file info
+            // Refresh displayed file info
             CurrentFileName = doc.FileName;
             CurrentFilePath = doc.FilePath;
 
