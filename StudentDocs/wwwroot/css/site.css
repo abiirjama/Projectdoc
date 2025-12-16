@@ -1,0 +1,104 @@
+/* Background: soft colorful gradient */
+body {
+    background: linear-gradient(135deg, #eef2ff 0%, #fdf2f8 40%, #ecfeff 100%);
+    color: #1f2937;
+}
+
+/* Navbar */
+.navbar {
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    color: #4f46e5 !important; /* indigo */
+}
+
+.nav-link {
+    color: #374151 !important;
+}
+
+.nav-link:hover {
+    color: #4f46e5 !important;
+}
+
+/* Main spacing: less empty space */
+main {
+    padding: 16px 0 !important;
+}
+
+/* Centered card */
+.container {
+    max-width: 980px;
+}
+
+.page-card {
+    background: rgba(255,255,255,0.9);
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+}
+
+/* Headings */
+h1, h2 {
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: #111827;
+}
+
+.subtitle {
+    color: #4b5563;
+    margin-bottom: 18px;
+}
+
+/* Colorful buttons */
+.btn {
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-weight: 600;
+}
+
+.btn-upload {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    border: none;
+    color: white;
+}
+
+.btn-upload:hover {
+    filter: brightness(0.95);
+    color: white;
+}
+
+.btn-view {
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    border: none;
+    color: white;
+}
+
+.btn-view:hover {
+    filter: brightness(0.95);
+    color: white;
+}
+
+/* Tables nicer */
+.table {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.table th {
+    background: #f3f4f6;
+    color: #111827;
+    font-weight: 700;
+}
+
+/* Footer */
+footer {
+    margin-top: 14px !important;
+    padding: 10px 0 !important;
+    color: #6b7280;
+}

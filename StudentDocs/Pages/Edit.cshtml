@@ -1,0 +1,45 @@
+﻿@page "{id:int}"
+@model StudentDocs.Pages.EditModel
+
+<h2>Edit Document</h2>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <p class="text-danger">@Model.ErrorMessage</p>
+}
+
+@if (!string.IsNullOrEmpty(Model.Message))
+{
+    <p class="text-success">@Model.Message</p>
+}
+
+<div class="page-card">
+
+    @if (!string.IsNullOrEmpty(Model.CurrentFileName))
+    {
+        <div class="mb-3">
+            <strong>Current file:</strong>
+            <a href="@Model.CurrentFilePath" target="_blank">
+                @Model.CurrentFileName
+            </a>
+        </div>
+    }
+
+    <form method="post" enctype="multipart/form-data">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="mb-3">
+            <label class="form-label">Category</label>
+            <input asp-for="Category" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Replace file (optional)</label>
+            <input type="file" asp-for="NewFile" class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-success">Save</button>
+        <a asp-page="/Documents" class="btn btn-secondary ms-2">Cancel</a>
+    </form>
+
+</div>
